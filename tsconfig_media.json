@@ -1,0 +1,22 @@
+{
+    "include": [
+        "media-src/**/*.ts"
+    ],
+    "exclude": [
+		"node_modules",
+		".vscode-test"
+	],
+    "compilerOptions": {
+        "module": "ES6",
+        "removeComments": true,
+        "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "allowJs": true,
+        "sourceMap": true,
+        "target": "es6",
+        "lib": [
+            "es6",
+            "dom"
+        ]
+    }
+}

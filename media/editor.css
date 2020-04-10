@@ -1,0 +1,22 @@
+
+
+#hero-list .hero-item {
+    padding: 5px;
+    margin-bottom: 3px;
+    cursor: pointer;
+}
+
+#hero-list .hero-item:hover {
+    background: #252526;
+}
+
+#hero-list .hero-item .hero-img {
+    margin-right: 3px;
+    vertical-align: middle;
+    user-select: none;
+    pointer-events: none;
+}
+
+#hero-list .hero-item .hero-name {
+    vertical-align: middle;
+}

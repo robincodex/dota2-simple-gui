@@ -1,0 +1,30 @@
+
+#editor {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-bottom: 100px;
+
+    .hero-item {
+        display: inline-block;
+        width: 250px;
+        margin: 3px;
+        padding: 3px;
+        user-select: none;
+        cursor: pointer;
+
+        span, img {
+            vertical-align: middle;
+            pointer-events: none;
+            font-size: 18px;
+        }
+
+        &:hover {
+            background: #252526;
+        }
+
+        &.selected {
+            background: #374b37;
+        }
+    }
+}
