@@ -19,7 +19,7 @@ export function onRequest(e: any, webview: vscode.Webview) {
     if (e.label && e.requestId) {
         let cb = requestMap.get(e.label);
         if (cb) {
-            let result = cb(e.args);
+            let result = cb(...e.args);
             webview.postMessage({
                 requestId: e.requestId,
                 result,

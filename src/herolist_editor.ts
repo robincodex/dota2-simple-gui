@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { KeyValues, readFromString, emptyKeyValues, NewKeyValues, formatKeyValues } from 'easy-keyvalues';
-import { GetNonce } from './utils';
+import { GetNonce, onRequest, listenRequest } from './utils';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -14,21 +14,6 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     constructor( private readonly context: vscode.ExtensionContext ) {
-        this.kvList = [];
-    }
-
-    private kvList: KeyValues[];
-
-    /**
-     * Return KeyValues list, search from "whitelist" or "CustomHeroList"
-     */
-    private getHeroListKV(): KeyValues {
-        let kv = this.kvList.find((v) => v.Key === 'whitelist' || v.Key === 'CustomHeroList');
-        if (kv === undefined) {
-            vscode.window.showErrorMessage(`Can not find "whitelist" or "CustomHeroList", Please make sure that your file conform to activelist.txt or herolist.txt`);
-            return emptyKeyValues;
-        }
-        return kv;
     }
 
     /**
@@ -47,42 +32,78 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
             enableScripts: true,
         };
         webviewPanel.webview.html = await this.getHTML(webviewPanel.webview);
-        this.kvList = await readFromString(document.getText());
 
-        // convert text to KeyValues object
+        // send a text to webview
         const updateKeyValues = async () => {
             webviewPanel.webview.postMessage({
                 label: 'update',
-                data: this.getHeroListForJson(),
+                text: document.getText(),
             });
         };
+        listenRequest("request-update", updateKeyValues);
 
-        const changeHeroState = async (name: string) => {
-            let result = this.changeHeroState(name);
-            webviewPanel.webview.postMessage({
-                label: 'change-state',
-                result,
-            });
+        // change hero state
+        listenRequest("request-change-state", (...args: any[]) => {
+            let name = args[0];
+            if (typeof name !== "string") {
+                return;
+            }
+            this.changeHeroState(document, name);
+        });
 
-            const edit = new vscode.WorkspaceEdit();
-            edit.replace(
-                document.uri,
-                new vscode.Range(0,0,document.lineCount,0),
-                formatKeyValues(this.kvList));
-            vscode.workspace.applyEdit(edit);
-        };
-
-        webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            switch (ev.label) {
-                case 'request-update':
-                    updateKeyValues();
-                    return;
-                case 'request-change-state':
-                    changeHeroState(ev.name);
-                    return;
+        const onChangeDocument = vscode.workspace.onDidChangeTextDocument((e) => {
+            if (e.document.uri.toString() === document.uri.toString()) {
+                updateKeyValues();
             }
         });
 
+        webviewPanel.onDidDispose(() => {
+            onChangeDocument.dispose();
+        });
+
+        webviewPanel.webview.onDidReceiveMessage((ev: any) => {
+            onRequest(ev, webviewPanel.webview);
+        });
+    }
+
+    /**
+     * Change hero state
+     */
+    private changeHeroState(document: vscode.TextDocument, name: string) {
+        let hasChanged = false;
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i);
+            if (line.text.indexOf(name) >= 0) {
+                let newText = line.text.replace(/\d/, (v) => {
+                    return v==="1"? "0":"1";
+                });
+                const edit = new vscode.WorkspaceEdit();
+                edit.replace(
+                    document.uri,
+                    line.range,
+                    newText);
+                vscode.workspace.applyEdit(edit);
+                hasChanged = true;
+                break;
+            }
+        }
+
+        // Insert new KeyValues text on not change.
+        if (!hasChanged) {
+            let pos = new vscode.Position(0, 0);
+            for (let i = document.lineCount-1; i >= 0; i--) {
+                const line = document.lineAt(i);
+                if (line.text.indexOf("}") >= 0) {
+                    pos = new vscode.Position(i, 0);
+                    break;
+                }
+            }
+            const edit = new vscode.WorkspaceEdit();
+            edit.insert(
+                document.uri, pos,
+                `    "${name}"        "1"\n`);
+            vscode.workspace.applyEdit(edit);
+        }
     }
 
     /**
@@ -122,43 +143,5 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
                 </body>
             </html>
         `;
-    }
-
-    /**
-     * Return json array string from getHeroListKV()
-     */
-    private getHeroListForJson(): string {
-        let obj: {[key: string]: boolean} = {};
-        let root = this.getHeroListKV();
-        if (root === emptyKeyValues || !Array.isArray(root.Value)) {
-            return '';
-        }
-        
-        for(let kv of root.Value) {
-            obj[kv.Key] = kv.Value === "1";
-        }
-
-        return JSON.stringify(obj);
-    }
-
-    /**
-     * Change hero activation
-     * @param name hero name, example: npc_dota_hero_axe
-     */
-    private changeHeroState(name: string): string {
-        let root = this.getHeroListKV();
-        if (root === emptyKeyValues || !Array.isArray(root.Value)) {
-            return '';
-        }
-
-        let kv = root.Value.find((v: any) => v.Key === name);
-        if (!kv) {
-            kv = NewKeyValues(name, "1");
-            root.Value.push(kv);
-        } else {
-            kv.Value = kv.Value==='1'? '0':'1';
-        }
-
-        return JSON.stringify({[kv.Key]: kv.Value === "1"});
     }
 }

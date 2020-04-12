@@ -1,5 +1,5 @@
 import { HeroList } from './herolist';
-import { vscode } from './utils';
+import { vscode, request, onRequestResponse } from './utils';
 
 const Editor = document.getElementById('editor');
 
@@ -34,45 +34,35 @@ function Init() {
         const evData = ev.data;
         switch (evData.label) {
             case 'update':
-                if (!evData.data) {
-                    return;
-                }
-                vscode.setState({data: JSON.parse(evData.data)});
-                UpdateHeroItemState();
+                UpdateHeroesState(evData.text);
                 return;
-            case 'change-state':
-                UpdateHeroItemFromString(evData.result);
+            default:
+                onRequestResponse(evData);
                 return;
         }
     });
 
-    vscode.postMessage({label: 'request-update'});
+    request("request-update");
 }
 
-// Update hero-item state from data
-function UpdateHeroItemState() {
-    const state = vscode.getState();
-    if (!state && !state.data) {
-        return;
-    }
-    const data: {[key: string]: boolean} = state.data;
-    const children = Editor.getElementsByClassName('hero-item');
-    for (let i = 0; i < children.length; i++) {
-        const element = children.item(i);
-        const selected = data[element.getAttribute('name')] === true;
-        SetHeroItemState(element, selected);
-    }
-}
+// Update hero-item state from text
+function UpdateHeroesState(text: string) {
+    let elementList = Editor.querySelectorAll(".hero-item");
+    let data: {[key: string]: boolean} = {};
 
-function UpdateHeroItemFromString(json: string) {
-    const data: {[key: string]: boolean} = vscode.getState().data;
-    const newData: {[key: string]: boolean} = JSON.parse(json);
-    
-    for(let name in newData) {
-        const selected = newData[name];
-        data[name] = selected;
-        let element = Editor.querySelector(`[name="${name}"]`);
-        SetHeroItemState(element, selected);
+    let list = text.match(/\"[\w_]+\"\s+\"\d+\"/g);
+    if (list) {
+        for(let v of list) {
+            let kv = v.split(/\s+/);
+            let name = kv[0].replace(/\"/g, '');
+            let selected = kv[1] === '"1"';
+            data[name] = selected;
+        }
+    }
+
+    for(let i=0; i<elementList.length; i++) {
+        let element = elementList.item(i);
+        SetHeroItemState(element, data[element.getAttribute("name")] === true);
     }
 }
 
@@ -91,10 +81,7 @@ function SetHeroItemState(item: Element, selected: boolean) {
  * @param item The class of element is hero-item
  */
 function onClickHeroItem(item: HTMLElement) {
-    vscode.postMessage({
-        label: 'request-change-state',
-        name: item.getAttribute('name'),
-    });
+    request("request-change-state", item.getAttribute('name'));
 }
 
 (function() {

@@ -122,7 +122,56 @@ const HeroList = [
     "npc_dota_hero_void_spirit",
 ];
 
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation. All rights reserved.
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+this file except in compliance with the License. You may obtain a copy of the
+License at http://www.apache.org/licenses/LICENSE-2.0
+
+THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED
+WARRANTIES OR CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE,
+MERCHANTABLITY OR NON-INFRINGEMENT.
+
+See the Apache Version 2.0 License for specific language governing permissions
+and limitations under the License.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
 const vscode = acquireVsCodeApi();
+const requestMap = new Map();
+let requestCounter = 1;
+function request(label, ...args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
+            let requestId = requestCounter++;
+            requestMap.set(requestId, resolve);
+            vscode.postMessage({
+                requestId,
+                label,
+                args,
+            });
+        });
+    });
+}
+function onRequestResponse(data) {
+    if (typeof data.requestId === 'number') {
+        let resolve = requestMap.get(data.requestId);
+        if (resolve) {
+            resolve(data.result);
+            requestMap.delete(data.requestId);
+        }
+    }
+}
 
 const Editor = document.getElementById('editor');
 const baseUri = window.baseUri;
@@ -149,40 +198,30 @@ function Init() {
         const evData = ev.data;
         switch (evData.label) {
             case 'update':
-                if (!evData.data) {
-                    return;
-                }
-                vscode.setState({ data: JSON.parse(evData.data) });
-                UpdateHeroItemState();
+                UpdateHeroesState(evData.text);
                 return;
-            case 'change-state':
-                UpdateHeroItemFromString(evData.result);
+            default:
+                onRequestResponse(evData);
                 return;
         }
     });
-    vscode.postMessage({ label: 'request-update' });
+    request("request-update");
 }
-function UpdateHeroItemState() {
-    const state = vscode.getState();
-    if (!state && !state.data) {
-        return;
+function UpdateHeroesState(text) {
+    let elementList = Editor.querySelectorAll(".hero-item");
+    let data = {};
+    let list = text.match(/\"[\w_]+\"\s+\"\d+\"/g);
+    if (list) {
+        for (let v of list) {
+            let kv = v.split(/\s+/);
+            let name = kv[0].replace(/\"/g, '');
+            let selected = kv[1] === '"1"';
+            data[name] = selected;
+        }
     }
-    const data = state.data;
-    const children = Editor.getElementsByClassName('hero-item');
-    for (let i = 0; i < children.length; i++) {
-        const element = children.item(i);
-        const selected = data[element.getAttribute('name')] === true;
-        SetHeroItemState(element, selected);
-    }
-}
-function UpdateHeroItemFromString(json) {
-    const data = vscode.getState().data;
-    const newData = JSON.parse(json);
-    for (let name in newData) {
-        const selected = newData[name];
-        data[name] = selected;
-        let element = Editor.querySelector(`[name="${name}"]`);
-        SetHeroItemState(element, selected);
+    for (let i = 0; i < elementList.length; i++) {
+        let element = elementList.item(i);
+        SetHeroItemState(element, data[element.getAttribute("name")] === true);
     }
 }
 function SetHeroItemState(item, selected) {
@@ -196,10 +235,7 @@ function SetHeroItemState(item, selected) {
     }
 }
 function onClickHeroItem(item) {
-    vscode.postMessage({
-        label: 'request-change-state',
-        name: item.getAttribute('name'),
-    });
+    request("request-change-state", item.getAttribute('name'));
 }
 (function () {
     Init();
