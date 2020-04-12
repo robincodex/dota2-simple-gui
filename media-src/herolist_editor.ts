@@ -1,12 +1,10 @@
 import { HeroList } from './herolist';
+import { vscode } from './utils';
 
 const Editor = document.getElementById('editor');
 
 // @ts-ignore
 const baseUri = window.baseUri;
-
-// @ts-ignore
-const vscode = acquireVsCodeApi();
 
 function Init() {
     HeroList.sort();

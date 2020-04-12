@@ -37,6 +37,19 @@ async function media_typescript(cb) {
         sourcemap: true
     });
 
+    const heroEdtiorBundle = await rollup.rollup({
+        input: './media-src/hero_editor.ts',
+        plugins: [
+            rollupResolve(),
+            rollupTypescript({tsconfig: 'tsconfig_media.json'}),
+        ]
+    });
+    await heroEdtiorBundle.write({
+        file: './media/hero_editor.js',
+        format: 'cjs',
+        sourcemap: true
+    });
+
     cb();
 }
 

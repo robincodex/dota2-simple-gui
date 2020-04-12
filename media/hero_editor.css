@@ -1,0 +1,58 @@
+#editor {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 100px; }
+  #editor #editor-main {
+    display: flex;
+    flex-direction: row; }
+
+#hero-list {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  border: 1px solid #252525; }
+  #hero-list .hero-item {
+    display: block;
+    margin: 3px;
+    padding: 3px;
+    user-select: none;
+    cursor: pointer; }
+    #hero-list .hero-item span, #hero-list .hero-item img {
+      vertical-align: middle;
+      pointer-events: none;
+      font-size: 16px; }
+    #hero-list .hero-item:hover {
+      background: #252526; }
+    #hero-list .hero-item.selected {
+      background: #374b37; }
+
+#hero-info {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  border: 1px solid #252525;
+  margin-left: 10px; }
+  #hero-info .info-group {
+    display: table;
+    margin: 10px; }
+    #hero-info .info-group .group-name {
+      margin-bottom: 5px;
+      color: #60c4fa; }
+    #hero-info .info-group .kv-item {
+      display: table-row;
+      margin-bottom: 8px;
+      line-height: 30px; }
+    #hero-info .info-group .kv-input {
+      background: #252525;
+      margin-left: 10px;
+      border: 1px solid #000000;
+      color: #eeeeee;
+      padding: 5px 4px;
+      width: 200px; }
+      #hero-info .info-group .kv-input:focus {
+        outline-style: dashed;
+        outline-color: #374b37;
+        outline-width: 1px; }
+    #hero-info .info-group[group="Character"] .kv-input {
+      width: 600px; }

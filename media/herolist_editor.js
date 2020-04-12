@@ -122,9 +122,10 @@ const HeroList = [
     "npc_dota_hero_void_spirit",
 ];
 
+const vscode = acquireVsCodeApi();
+
 const Editor = document.getElementById('editor');
 const baseUri = window.baseUri;
-const vscode = acquireVsCodeApi();
 function Init() {
     HeroList.sort();
     let text = '';
