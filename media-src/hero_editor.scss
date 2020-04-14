@@ -75,6 +75,10 @@
                 outline-color: #374b37;
                 outline-width: 1px;
             }
+
+            &.error:focus {
+                outline-color: #8f1c1c;
+            }
         }
 
         &[group="Character"] {

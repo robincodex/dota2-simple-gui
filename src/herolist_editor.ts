@@ -1,6 +1,5 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { KeyValues, readFromString, emptyKeyValues, NewKeyValues, formatKeyValues } from 'easy-keyvalues';
 import { GetNonce, onRequest, listenRequest } from './utils';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
