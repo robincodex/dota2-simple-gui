@@ -10,7 +10,8 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCustomEditor:dota2SimpleGUI.editHeroList"
+		"onCustomEditor:dota2SimpleGUI.editHeroList",
+		"onCustomEditor:dota2SimpleGUI.editNetTable"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -24,6 +25,15 @@
 					},
 					{
 						"filenamePattern": "**/*/scripts/npc/activelist.txt"
+					}
+				]
+			},
+			{
+				"viewType": "dota2SimpleGUI.editNetTable",
+				"displayName": "Dota2 Simple GUI for nettable",
+				"selector": [
+					{
+						"filenamePattern": "**/*/scripts/custom_net_tables.txt"
 					}
 				]
 			}
@@ -60,6 +70,6 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
-		"easy-keyvalues": "0.0.8"
+		"easy-keyvalues": "0.0.9"
 	}
 }

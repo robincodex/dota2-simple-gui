@@ -27,3 +27,12 @@ export function onRequest(e: any, webview: vscode.Webview) {
         }
     }
 }
+
+export function writeDocument(document: vscode.TextDocument, text: string) {
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(
+        document.uri, 
+        new vscode.Range(0,0,document.lineCount, 0),
+        text);
+    vscode.workspace.applyEdit(edit);
+}

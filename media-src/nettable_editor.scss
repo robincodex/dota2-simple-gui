@@ -1,0 +1,47 @@
+@import "./common";
+
+.btn {
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px;
+    user-select: none;
+
+    &:hover {
+        background: #1f71b4;
+    }
+    &:active {
+        background: #175385;
+    }
+}
+
+.table {
+    margin-top: 10px;
+}
+
+#add-table-form {
+    margin-top: 10px;
+}
+
+.nettable {
+    .edit-input {
+        display: none;
+    }
+    .name {
+        display: inline;
+    }
+    .submit {
+        display: none;
+    }
+
+    &.editing {
+        .name, .remove, .edit {
+            display: none;
+        }
+        .edit-input {
+            display: inline-block;
+        }
+        .submit {
+            display: inline-block;
+        }
+    }
+}

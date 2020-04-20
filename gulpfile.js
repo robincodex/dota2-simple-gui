@@ -24,31 +24,25 @@ function typescript(cb) {
  * Compile typescript from media-src directory
  */
 async function media_typescript(cb) {
-    const herolistBundle = await rollup.rollup({
-        input: './media-src/herolist_editor.ts',
-        plugins: [
-            rollupResolve(),
-            rollupTypescript({tsconfig: 'tsconfig_media.json'}),
-        ]
-    });
-    await herolistBundle.write({
-        file: './media/herolist_editor.js',
-        format: 'cjs',
-        sourcemap: true
-    });
+    const list = [
+        "herolist_editor.ts",
+        "nettable_editor.ts",
+    ];
 
-    const heroEdtiorBundle = await rollup.rollup({
-        input: './media-src/hero_editor.ts',
-        plugins: [
-            rollupResolve(),
-            rollupTypescript({tsconfig: 'tsconfig_media.json'}),
-        ]
-    });
-    await heroEdtiorBundle.write({
-        file: './media/hero_editor.js',
-        format: 'cjs',
-        sourcemap: true
-    });
+    for(let filename of list) {
+        const heroEdtiorBundle = await rollup.rollup({
+            input: `./media-src/${filename}`,
+            plugins: [
+                rollupResolve(),
+                rollupTypescript({tsconfig: 'tsconfig_media.json'}),
+            ]
+        });
+        await heroEdtiorBundle.write({
+            file: `./media/${filename.replace(".ts", ".js")}`,
+            format: 'cjs',
+            sourcemap: true
+        });
+    }
 
     cb();
 }

@@ -1,0 +1,34 @@
+
+body {
+    background: #1e1e1e;
+    color: #eeeeee;
+}
+
+.table {
+    border-collapse: collapse;
+
+    tr {
+        td {
+            padding: 5px;
+            border: 1px solid #353535;
+        }
+    }
+}
+
+input {
+    background: #252525;
+    border: 1px solid #000000;
+    color: #eeeeee;
+    padding: 5px 4px;
+    width: 200px;
+    
+    &:focus {
+        outline-style: dashed;
+        outline-color: #374b37;
+        outline-width: 1px;
+    }
+
+    &.error:focus {
+        outline-color: #8f1c1c;
+    }
+}
