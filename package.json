@@ -1,7 +1,7 @@
 {
-	"name": "dota2-editor-for-heroes",
-	"displayName": "Dota2 Editor For Heroes",
-	"description": "Visual edit npc_heroes_custom.txt, herolist.txt, activelist.txt",
+	"name": "dota2-simple-gui",
+	"displayName": "Dota2 Simple GUI",
+	"description": "Visual edit some file for Dota2 custom game",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -10,24 +10,14 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCustomEditor:dota2EditorForHeroes.editKeyValues",
-		"onCustomEditor:dota2EditorForHeroes.editHeroList"
+		"onCustomEditor:dota2SimpleGUI.editHeroList"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"customEditors": [
 			{
-				"viewType": "dota2EditorForHeroes.editKeyValues",
-				"displayName": "Dota2 Editor For Heroes",
-				"selector": [
-					{
-						"filenamePattern": "**/*/scripts/npc/npc_heroes_custom.txt"
-					}
-				]
-			},
-			{
-				"viewType": "dota2EditorForHeroes.editHeroList",
-				"displayName": "Dota2 Editor For Heroes",
+				"viewType": "dota2SimpleGUI.editHeroList",
+				"displayName": "Dota2 Simple GUI for hero list",
 				"selector": [
 					{
 						"filenamePattern": "**/*/scripts/npc/herolist.txt"
@@ -70,6 +60,6 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
-		"easy-keyvalues": "0.0.4"
+		"easy-keyvalues": "0.0.8"
 	}
 }

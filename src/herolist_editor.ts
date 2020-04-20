@@ -4,7 +4,7 @@ import { GetNonce, onRequest, listenRequest } from './utils';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
-    private static readonly viewType = 'dota2EditorForHeroes.editHeroList';
+    private static readonly viewType = 'dota2SimpleGUI.editHeroList';
     
     public static register(context: vscode.ExtensionContext): vscode.Disposable {
         const provider = new HeroListEditorProvider(context);
