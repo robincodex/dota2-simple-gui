@@ -12,6 +12,12 @@ body {
             padding: 5px;
             border: 1px solid #353535;
         }
+
+        &:not(:last-child) {
+            td {
+                border-bottom-width: 0;
+            }
+        }
     }
 }
 

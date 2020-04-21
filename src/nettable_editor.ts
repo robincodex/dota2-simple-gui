@@ -89,7 +89,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
             const name = args[0];
             const kv = this.getCustomNetTables();
             if (Array.isArray(kv.Value)) {
-                kv.Value.push(NewKeyValues("", `"${name}"`));
+                kv.Value.push(NewKeyValues("", name));
             }
             writeDocument(document, formatKeyValues(this.kvList));
         });
@@ -99,7 +99,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
             if (args.length <= 0) {
                 return;
             }
-            const name = `"${args[0]}"`;
+            const name = args[0];
             const kv = this.getCustomNetTables();
             if (Array.isArray(kv.Value)) {
                 kv.Value = kv.Value.filter((v) => v.Value !== name);
@@ -112,8 +112,8 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
             if (args.length < 2) {
                 return;
             }
-            const name = `"${args[0]}"`;
-            const newName = `"${args[1]}"`;
+            const name = args[0];
+            const newName = args[1];
             const kv = this.getCustomNetTables();
             if (Array.isArray(kv.Value)) {
                 const child = kv.Value.find((v) => v.Value === name);

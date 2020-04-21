@@ -27,11 +27,11 @@ function UpdateNetTables(json: string) {
         <tr class="nettable">
             <td>
                 <span class="name">${name}</span>
-                <input class="edit-input" type="text" value=${name} name=${name} />
+                <input class="edit-input" type="text" value="${name}" name="${name}" />
             </td>
             <td>
-                <div class="btn edit" name=${name}>✏️</div>
-                <div class="btn remove" name=${name}>❌</div>
+                <div class="btn edit" name="${name}">✏️</div>
+                <div class="btn remove" name="${name}">❌</div>
                 <div class="btn submit">✔️</div>
             </td>
         </tr>
