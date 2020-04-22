@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { KeyValues3, loadFromString, emptyKeyValues, KeyValues3Type, NewKeyValues, formatKeyValues } from 'easy-keyvalues/dist/kv3';
+import { KeyValues3, loadFromString, emptyKeyValues, KeyValues3Type, formatKeyValues, NewKeyValue } from 'easy-keyvalues/dist/kv3';
 import { GetNonce, onRequest, listenRequest, writeDocument } from './utils';
 
 export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
@@ -73,7 +73,12 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
 
         // send a text to webview
         const updateKeyValues = async () => {
-            this.kvList = await loadFromString(document.getText());
+            try {
+                this.kvList = await loadFromString(document.getText());
+                console.log(this.kvList);
+            } catch(e) {
+                vscode.window.showErrorMessage(e.toString() + "\n" + document.uri.fsPath);
+            }
             webviewPanel.webview.postMessage({
                 label: 'update',
                 text: this.getTableListToJSON(),
@@ -88,7 +93,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
             const name = args[0];
             const kv = this.getCustomNetTables();
             if (Array.isArray(kv.Value)) {
-                kv.Value.push(NewKeyValues("", name));
+                kv.Value.push(NewKeyValue("", name));
             }
             writeDocument(document, formatKeyValues(this.kvList));
         });

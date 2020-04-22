@@ -11,8 +11,8 @@
 	],
 	"activationEvents": [
 		"onCustomEditor:dota2SimpleGUI.editHeroList",
-        "onCustomEditor:dota2SimpleGUI.editNetTable",
-        "onCustomEditor:dota2SimpleGUI.editAddonInfo"
+		"onCustomEditor:dota2SimpleGUI.editNetTable",
+		"onCustomEditor:dota2SimpleGUI.editAddonInfo"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -37,8 +37,8 @@
 						"filenamePattern": "**/*/scripts/custom_net_tables.txt"
 					}
 				]
-            },
-            {
+			},
+			{
 				"viewType": "dota2SimpleGUI.editAddonInfo",
 				"displayName": "Dota2 Simple GUI for addoninfo",
 				"selector": [
@@ -58,14 +58,14 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^7.1.1",
-		"@rollup/plugin-typescript": "^4.0.0",
+		"@rollup/plugin-node-resolve": "^7.1.3",
+		"@rollup/plugin-typescript": "^4.1.1",
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^7.0.2",
-		"@types/node": "^13.11.0",
+		"@types/node": "^13.13.2",
 		"@types/vscode": "^1.44.0",
-		"@typescript-eslint/eslint-plugin": "^2.26.0",
-		"@typescript-eslint/parser": "^2.26.0",
+		"@typescript-eslint/eslint-plugin": "^2.29.0",
+		"@typescript-eslint/parser": "^2.29.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"gulp": "^4.0.2",
@@ -75,11 +75,11 @@
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"mocha": "^7.1.1",
 		"node-sass": "^4.13.1",
-		"rollup": "^2.3.4",
+		"rollup": "^2.7.1",
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
-		"easy-keyvalues": "^0.1.0"
+		"easy-keyvalues": "^0.1.1"
 	}
 }

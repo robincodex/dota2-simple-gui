@@ -332,7 +332,11 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
 
         // send a text to webview
         const updateKeyValues = async () => {
-            this.kvList = await loadFromString(document.getText());
+            try {
+                this.kvList = await loadFromString(document.getText());
+            } catch(e) {
+                vscode.window.showErrorMessage(e.toString() + "\n" + document.uri.fsPath);
+            }
             webviewPanel.webview.postMessage({
                 label: 'update',
                 text: this.getJSON(),

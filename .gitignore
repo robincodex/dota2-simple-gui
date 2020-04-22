@@ -6,3 +6,4 @@ media/*
 !media/heroes
 !media/checkbox.png
 package-lock.json
+yarn.lock
