@@ -1,6 +1,6 @@
 # DOTA2 Simple GUI
 
-> :warning:请在使用此扩展前备份好你的文件
+> :warning:请在使用此扩展前备份好你的文件  
 > :warning:Please backup your files before using this extension.
 
 # Hero List Editor

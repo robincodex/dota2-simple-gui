@@ -3,8 +3,11 @@
 out/test/**
 src/**
 .gitignore
+gulpfile.js
 vsc-extension-quickstart.md
+**/tsconfig_media.json
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
+media-src/**
