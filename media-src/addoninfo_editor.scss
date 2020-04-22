@@ -1,0 +1,76 @@
+@import "./common";
+
+.btn {
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px;
+    user-select: none;
+
+    &:hover {
+        background: #1f71b4;
+    }
+    &:active {
+        background: #175385;
+    }
+}
+
+#maps-group {
+    .max-players-select {
+        width: 80px;
+    }
+    .maps-select {
+        margin-top: 10px;
+        min-width: 150px;
+    }
+}
+
+#options-group {
+    margin-top: 15px;
+    .options-item {
+        margin-bottom: 5px;
+    }
+}
+
+#keyboard-group {
+    margin-top: 15px;
+
+    .table {
+        input.key {
+            width: 65px;
+        }
+    }
+
+    .btn {
+        &.edit, &.remove {
+            display: inline;
+        }
+        &.submit {
+            display: none;
+        }
+    }
+
+    .keyboard-row {
+        input {
+            display: none;
+        }
+    }
+
+    .editing {
+        .btn {
+            &.edit, &.remove {
+                display: none;
+            }
+            &.submit {
+                display: inline;
+            }
+        }
+        &.keyboard-row {
+            span.text {
+                display: none;
+            }
+            input {
+                display: inline-block;
+            }
+        }
+    }
+}

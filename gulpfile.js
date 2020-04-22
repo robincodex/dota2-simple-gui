@@ -27,6 +27,7 @@ async function media_typescript(cb) {
     const list = [
         "herolist_editor.ts",
         "nettable_editor.ts",
+        "addoninfo_editor.ts",
     ];
 
     for(let filename of list) {

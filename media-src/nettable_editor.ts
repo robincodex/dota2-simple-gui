@@ -15,11 +15,16 @@ function Init() {
         }
     });
 
-    request("update");
+    const state = vscode.getState();
+    if (state && state.text) {
+        UpdateNetTables(state.text);
+    }
 }
 
-function UpdateNetTables(json: string) {
-    const list: string[] = JSON.parse(json);
+function UpdateNetTables(text: string) {
+    vscode.setState({text});
+
+    const list: string[] = JSON.parse(text);
     let html = '';
 
     for(const name of list) {
@@ -96,8 +101,8 @@ function UpdateNetTables(json: string) {
     const form = Editor.querySelector("#add-table-form");
     form.addEventListener("click", (ev) => {
         ev.stopPropagation();
-        const target = ev.target as HTMLElement;
-        if (target.classList.contains("btn")) {
+        const target = ev.target;
+        if (target instanceof HTMLLIElement && target.classList.contains("btn")) {
             const input = form.children.item(0) as HTMLInputElement;
             request("add-table", input.value);
         }

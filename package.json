@@ -1,7 +1,7 @@
 {
 	"name": "dota2-simple-gui",
 	"displayName": "Dota2 Simple GUI",
-	"description": "Visual edit some file for Dota2 custom game",
+	"description": "Visual edits some file for Dota2 custom game in vscode",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.44.0"
@@ -11,7 +11,8 @@
 	],
 	"activationEvents": [
 		"onCustomEditor:dota2SimpleGUI.editHeroList",
-		"onCustomEditor:dota2SimpleGUI.editNetTable"
+        "onCustomEditor:dota2SimpleGUI.editNetTable",
+        "onCustomEditor:dota2SimpleGUI.editAddonInfo"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -34,6 +35,15 @@
 				"selector": [
 					{
 						"filenamePattern": "**/*/scripts/custom_net_tables.txt"
+					}
+				]
+            },
+            {
+				"viewType": "dota2SimpleGUI.editAddonInfo",
+				"displayName": "Dota2 Simple GUI for addoninfo",
+				"selector": [
+					{
+						"filenamePattern": "**/*/addoninfo.txt"
 					}
 				]
 			}

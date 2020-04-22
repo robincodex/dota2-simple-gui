@@ -79,7 +79,6 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
                 text: this.getTableListToJSON(),
             });
         };
-        listenRequest("update", updateKeyValues);
 
         // Add a table name
         listenRequest("add-table", (...args: any[]) => {
@@ -125,6 +124,9 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         });
 
         const onChangeDocument = vscode.workspace.onDidChangeTextDocument((e) => {
+            if (e.contentChanges.length <= 0) {
+                return;
+            }
             if (e.document.uri.toString() === document.uri.toString()) {
                 updateKeyValues();
             }
@@ -137,6 +139,8 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
             onRequest(ev, webviewPanel.webview);
         });
+
+        updateKeyValues();
     }
 
     /**
@@ -171,7 +175,6 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
                 <body>
                     <div id="editor">
                     </div>
-                    <script nonce="${nonce}" >window.baseUri = '${baseUri}'</script>
                     <script nonce="${nonce}" src="${scriptUri}"></script>
                 </body>
             </html>
