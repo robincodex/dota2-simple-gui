@@ -1,5 +1,8 @@
 # Change Log
 
+## v0.0.5
+- Remove some buttons event for SoundEvents Editor
+
 ## v0.0.4
 - Fix opening multiple files for SoundEvents Editor
 

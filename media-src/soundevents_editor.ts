@@ -230,19 +230,6 @@ function RenderView(soundList: soundType[]) {
                 return;
             }
 
-            // Add or change a sound key
-            if (target.classList.contains('change-key-value')) {
-                let input = target.previousElementSibling;
-                if (input instanceof HTMLInputElement) {
-                    const event = input.getAttribute('event');
-                    const key = input.getAttribute('key');
-                    if (event && key) {
-                        request("change-sound-key", event, key, input.value);
-                    }
-                }
-                return;
-            }
-
             // Add a sound key
             if (target.classList.contains('add-sound-key')) {
                 let input = target.previousElementSibling;
