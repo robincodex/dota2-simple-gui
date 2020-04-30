@@ -1,3 +1,7 @@
 # Change Log
 
-- 2020-4-30 Add SoundEvens Editor, support edit `*.vsndevts`
+## v0.0.4
+- Fix opening multiple files for SoundEvents Editor
+
+## v0.0.3
+- Add SoundEvens Editor, support edit `*.vsndevts`
