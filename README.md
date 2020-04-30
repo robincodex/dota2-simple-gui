@@ -1,5 +1,7 @@
 # DOTA2 Simple GUI
 
+[![download](https://img.shields.io/visual-studio-marketplace/d/robincode.dota2-simple-gui)](https://marketplace.visualstudio.com/items?itemName=robincode.dota2-simple-gui)
+
 > ⚠️请在使用此扩展前备份好你的文件  
 > ⚠️Please backup your files before using this extension.
 

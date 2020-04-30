@@ -4,6 +4,32 @@ body {
     color: #eeeeee;
 }
 
+button {
+    background: #303030;
+    border: 1px solid #000000;
+    color: #eeeeee;
+    padding: 4px 8px;
+    outline: none;
+    border-radius: 100000px;
+
+    &:hover {
+        border: 1px solid #555555;
+    }
+
+    &.danger {
+        color: #e9b6b6;
+        border: 1px solid #941515;
+
+        &:hover {
+            border: 1px solid #d44d4d;
+        }
+    }
+}
+
+.invisible {
+    display: none !important;
+}
+
 .table {
     border-collapse: collapse;
 

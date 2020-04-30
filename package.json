@@ -1,90 +1,100 @@
 {
-	"name": "dota2-simple-gui",
-	"displayName": "Dota2 Simple GUI",
-	"description": "Visual edits some file for Dota2 custom game in vscode",
-    "version": "0.0.2",
+    "name": "dota2-simple-gui",
+    "displayName": "Dota2 Simple GUI",
+    "description": "Visual edits some file for Dota2 custom game in vscode",
+    "version": "0.0.3",
     "publisher": "robincode",
     "icon": "media/logo.png",
-	"engines": {
-		"vscode": "^1.44.0"
+    "engines": {
+        "vscode": "^1.44.0"
     },
     "repository": {
         "url": "https://github.com/RobinCodeX/dota2-simple-gui"
     },
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCustomEditor:dota2SimpleGUI.editHeroList",
-		"onCustomEditor:dota2SimpleGUI.editNetTable",
-		"onCustomEditor:dota2SimpleGUI.editAddonInfo"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"customEditors": [
-			{
-				"viewType": "dota2SimpleGUI.editHeroList",
-				"displayName": "Dota2 Simple GUI for hero list",
-				"selector": [
-					{
-						"filenamePattern": "**/*/scripts/npc/herolist.txt"
-					},
-					{
-						"filenamePattern": "**/*/scripts/npc/activelist.txt"
-					}
-				]
-			},
-			{
-				"viewType": "dota2SimpleGUI.editNetTable",
-				"displayName": "Dota2 Simple GUI for nettable",
-				"selector": [
-					{
-						"filenamePattern": "**/*/scripts/custom_net_tables.txt"
-					}
-				]
-			},
-			{
-				"viewType": "dota2SimpleGUI.editAddonInfo",
-				"displayName": "Dota2 Simple GUI for addoninfo",
-				"selector": [
-					{
-						"filenamePattern": "**/*/addoninfo.txt"
-					}
-				]
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "gulp build",
-		"lint": "eslint src --ext ts",
-		"watch": "gulp watch",
-		"pretest": "npm run compile && npm run lint",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@rollup/plugin-node-resolve": "^7.1.3",
-		"@rollup/plugin-typescript": "^4.1.1",
-		"@types/glob": "^7.1.1",
-		"@types/mocha": "^7.0.2",
-		"@types/node": "^13.13.2",
-		"@types/vscode": "^1.44.0",
-		"@typescript-eslint/eslint-plugin": "^2.29.0",
-		"@typescript-eslint/parser": "^2.29.0",
-		"eslint": "^6.8.0",
-		"glob": "^7.1.6",
-		"gulp": "^4.0.2",
-		"gulp-cli": "^2.2.0",
-		"gulp-sass": "^4.0.2",
-		"gulp-sourcemaps": "^2.6.5",
-		"gulp-typescript": "^6.0.0-alpha.1",
-		"mocha": "^7.1.1",
-		"node-sass": "^4.13.1",
-		"rollup": "^2.7.1",
-		"typescript": "^3.8.3",
-		"vscode-test": "^1.3.0"
-	},
-	"dependencies": {
-		"easy-keyvalues": "^0.1.1"
-	}
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCustomEditor:dota2SimpleGUI.editHeroList",
+        "onCustomEditor:dota2SimpleGUI.editNetTable",
+        "onCustomEditor:dota2SimpleGUI.editAddonInfo",
+        "onCustomEditor:dota2SimpleGUI.editSoundEvents"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "customEditors": [
+            {
+                "viewType": "dota2SimpleGUI.editHeroList",
+                "displayName": "Dota2 Simple GUI for hero list",
+                "selector": [
+                    {
+                        "filenamePattern": "**/*/scripts/npc/herolist.txt"
+                    },
+                    {
+                        "filenamePattern": "**/*/scripts/npc/activelist.txt"
+                    }
+                ]
+            },
+            {
+                "viewType": "dota2SimpleGUI.editNetTable",
+                "displayName": "Dota2 Simple GUI for nettable",
+                "selector": [
+                    {
+                        "filenamePattern": "**/*/scripts/custom_net_tables.txt"
+                    }
+                ]
+            },
+            {
+                "viewType": "dota2SimpleGUI.editAddonInfo",
+                "displayName": "Dota2 Simple GUI for addoninfo",
+                "selector": [
+                    {
+                        "filenamePattern": "**/*/addoninfo.txt"
+                    }
+                ]
+            },
+            {
+                "viewType": "dota2SimpleGUI.editSoundEvents",
+                "displayName": "Dota2 Simple GUI for sound events",
+                "selector": [
+                    {
+                        "filenamePattern": "**/*.vsndevts"
+                    }
+                ]
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "gulp build",
+        "lint": "eslint src --ext ts",
+        "watch": "gulp watch",
+        "pretest": "npm run compile && npm run lint",
+        "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+        "@rollup/plugin-node-resolve": "^7.1.3",
+        "@rollup/plugin-typescript": "^4.1.1",
+        "@types/glob": "^7.1.1",
+        "@types/mocha": "^7.0.2",
+        "@types/node": "^13.13.2",
+        "@types/vscode": "^1.44.0",
+        "@typescript-eslint/eslint-plugin": "^2.29.0",
+        "@typescript-eslint/parser": "^2.29.0",
+        "eslint": "^6.8.0",
+        "glob": "^7.1.6",
+        "gulp": "^4.0.2",
+        "gulp-cli": "^2.2.0",
+        "gulp-sass": "^4.0.2",
+        "gulp-sourcemaps": "^2.6.5",
+        "gulp-typescript": "^6.0.0-alpha.1",
+        "mocha": "^7.1.1",
+        "node-sass": "^4.13.1",
+        "rollup": "^2.7.1",
+        "typescript": "^3.8.3",
+        "vscode-test": "^1.3.0"
+    },
+    "dependencies": {
+        "easy-keyvalues": "^0.1.2"
+    }
 }
