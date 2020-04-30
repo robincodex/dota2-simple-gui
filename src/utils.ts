@@ -28,6 +28,27 @@ export function onRequest(e: any, webview: vscode.Webview) {
     }
 }
 
+export class RequestHelper {
+    public _requestMap = new Map<string, Function>();
+
+    public listenRequest(label: string, cb: Function) {
+        this._requestMap.set(label, cb);
+    }
+
+    public onRequest(e: any, webview: vscode.Webview) {
+        if (e.label && e.requestId) {
+            let cb = this._requestMap.get(e.label);
+            if (cb) {
+                let result = cb(...e.args);
+                webview.postMessage({
+                    requestId: e.requestId,
+                    result,
+                });
+            }
+        }
+    }
+}
+
 export function writeDocument(document: vscode.TextDocument, text: string) {
     const edit = new vscode.WorkspaceEdit();
     edit.replace(

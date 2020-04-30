@@ -1,21 +1,13 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { KeyValues3, loadFromString, formatKeyValues, NewKeyValue, NewKeyValuesObject, NewKeyValuesArray } from 'easy-keyvalues/dist/kv3';
-import { GetNonce, onRequest, initializeKV3ToDocument, listenRequest, writeDocument } from './utils';
+import { GetNonce, initializeKV3ToDocument, writeDocument, RequestHelper } from './utils';
 
-export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvider {
-
-    private static readonly viewType = 'dota2SimpleGUI.editSoundEvents';
-    
-    public static register(context: vscode.ExtensionContext): vscode.Disposable {
-        const provider = new SoundEventsEditorProvider(context);
-        const providerRegistration = vscode.window.registerCustomEditorProvider(SoundEventsEditorProvider.viewType, provider);
-        return providerRegistration;
-    }
+export class SoundEventsEditorService extends RequestHelper {
 
     private kvList: KeyValues3[];
 
-    private soundKeys: string[] = [
+    private static soundKeys: string[] = [
         'type',
         'volume',
         'pitch',
@@ -29,7 +21,10 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         'distance_max',
     ];
 
-    constructor( private readonly context: vscode.ExtensionContext ) {
+    constructor(
+        private readonly context: vscode.ExtensionContext,
+    ) {
+        super();
         this.kvList = [];
     }
 
@@ -300,7 +295,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         };
 
         // Add a new event
-        listenRequest("add-event", (...args: any[]) => {
+        this.listenRequest("add-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -310,7 +305,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Remove a event
-        listenRequest("remove-event", (...args: any[]) => {
+        this.listenRequest("remove-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -320,7 +315,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Change a event name
-        listenRequest("change-event-name", (...args: any[]) => {
+        this.listenRequest("change-event-name", (...args: any[]) => {
             const oldEvent = args[0];
             const newEvent = args[1];
             if (typeof oldEvent !== 'string' && typeof newEvent !== 'string') {
@@ -331,7 +326,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Remove a sound file
-        listenRequest("remove-sound-file", (...args: any[]) => {
+        this.listenRequest("remove-sound-file", (...args: any[]) => {
             const event = args[0];
             const index = args[1];
             if (typeof event !== 'string' && typeof index !== 'number') {
@@ -342,7 +337,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Add a sound file
-        listenRequest("add-sound-file", (...args: any[]) => {
+        this.listenRequest("add-sound-file", (...args: any[]) => {
             const event = args[0];
             const file = args[1];
             if (typeof event !== 'string' && typeof file !== 'string') {
@@ -353,12 +348,12 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Return soundKeys
-        listenRequest("get-sound-keys", (...args: any[]) => {
-            return this.soundKeys;
+        this.listenRequest("get-sound-keys", (...args: any[]) => {
+            return SoundEventsEditorService.soundKeys;
         });
 
         // Add or change a sound key
-        listenRequest("change-sound-key", (...args: any[]) => {
+        this.listenRequest("change-sound-key", (...args: any[]) => {
             const event = args[0];
             const key = args[1];
             const value = args[2];
@@ -370,7 +365,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Remove a sound key
-        listenRequest("remove-sound-key", (...args: any[]) => {
+        this.listenRequest("remove-sound-key", (...args: any[]) => {
             const event = args[0];
             const key = args[1];
             if (typeof event !== 'string' && typeof key !== 'string') {
@@ -381,7 +376,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Move a sound event
-        listenRequest("move-sound-event", (...args: any[]) => {
+        this.listenRequest("move-sound-event", (...args: any[]) => {
             const event = args[0];
             const up = args[1];
             if (typeof event !== 'string' && typeof up !== 'boolean') {
@@ -392,7 +387,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         // Dulpicate a sound event
-        listenRequest("duplicate-sound-event", (...args: any[]) => {
+        this.listenRequest("duplicate-sound-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -411,11 +406,12 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         });
 
         webviewPanel.onDidDispose(() => {
+            this._requestMap.clear();
             onChangeDocument.dispose();
         });
 
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            onRequest(ev, webviewPanel.webview);
+            this.onRequest(ev, webviewPanel.webview);
         });
 
         // Initialize it if it is empty text
@@ -469,5 +465,44 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
                 </body>
             </html>
         `;
+    }
+}
+
+export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvider {
+
+    private static readonly viewType = 'dota2SimpleGUI.editSoundEvents';
+    
+    public static register(context: vscode.ExtensionContext): vscode.Disposable {
+        const provider = new SoundEventsEditorProvider(context);
+        const providerRegistration = vscode.window.registerCustomEditorProvider(SoundEventsEditorProvider.viewType, provider);
+        return providerRegistration;
+    }
+
+    private ServiceTable: Map<string, SoundEventsEditorService>;
+
+    constructor( private readonly context: vscode.ExtensionContext ) {
+        this.ServiceTable = new Map();
+    }
+
+    /**
+     * When editor is opened
+     * @param document 
+     * @param webviewPanel 
+     * @param _token 
+     */
+    public async resolveCustomTextEditor(
+		document: vscode.TextDocument,
+		webviewPanel: vscode.WebviewPanel,
+		_token: vscode.CancellationToken
+	): Promise<void> {
+        let service = this.ServiceTable.get(document.uri.fsPath);
+        if (!service) {
+            service = new SoundEventsEditorService(this.context);
+            this.ServiceTable.set(document.uri.fsPath, service);
+        }
+        webviewPanel.onDidDispose(() => {
+            this.ServiceTable.delete(document.uri.fsPath);
+        });
+        await service.resolveCustomTextEditor(document, webviewPanel, _token);
     }
 }
