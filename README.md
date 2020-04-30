@@ -5,6 +5,11 @@
 > ⚠️请在使用此扩展前备份好你的文件  
 > ⚠️Please backup your files before using this extension.
 
+# SoundEvents Editor
+Support edit ***.vsndevts**.
+
+![SoundEventsEditor](https://github.com/RobinCodeX/dota2-simple-gui/raw/master/.github/soundevents.gif)
+
 # Hero List Editor
 Support edit **herolist.txt** or **activelist.txt**.
 
