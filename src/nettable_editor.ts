@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { KeyValues3, loadFromString, emptyKeyValues, KeyValues3Type, formatKeyValues, NewKeyValue } from 'easy-keyvalues/dist/kv3';
-import { GetNonce, onRequest, listenRequest, writeDocument } from './utils';
+import { KeyValues3, loadFromString, emptyKeyValues, KeyValues3Type, formatKeyValues, NewKeyValue, NewKeyValuesArray } from 'easy-keyvalues/dist/kv3';
+import { GetNonce, onRequest, listenRequest, writeDocument, initializeKV3ToDocument } from './utils';
 
 export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -31,6 +31,9 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
             if (tables) {
                 return tables;
             }
+            const newTable = NewKeyValuesArray("custom_net_tables", []);
+            this.kvList[1].Value.push(newTable);
+            return newTable;
         }
         return emptyKeyValues;
     }
@@ -75,7 +78,6 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         const updateKeyValues = async () => {
             try {
                 this.kvList = await loadFromString(document.getText());
-                console.log(this.kvList);
             } catch(e) {
                 vscode.window.showErrorMessage(e.toString() + "\n" + document.uri.fsPath);
             }
@@ -144,6 +146,18 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
             onRequest(ev, webviewPanel.webview);
         });
+
+        // Initialize it if it is empty text
+        if (document.getText().trim().length === 0) {
+            initializeKV3ToDocument(document);
+            return;
+        }
+        
+        // Only support KeyValues3
+        if (!document.lineAt(0).text.startsWith("<!--")) {
+            vscode.window.showErrorMessage("This file isn't kv3 format.\n" + document.uri.fsPath);
+            return;
+        }
 
         updateKeyValues();
     }
