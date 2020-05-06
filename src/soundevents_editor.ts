@@ -407,6 +407,7 @@ export class SoundEventsEditorService {
         });
 
         webviewPanel.onDidDispose(() => {
+            this.request.clear();
             onChangeDocument.dispose();
         });
 
@@ -478,10 +479,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
         return providerRegistration;
     }
 
-    private ServiceTable: Map<string, SoundEventsEditorService>;
-
     constructor( private readonly context: vscode.ExtensionContext ) {
-        this.ServiceTable = new Map();
     }
 
     /**
@@ -495,14 +493,7 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
 		webviewPanel: vscode.WebviewPanel,
 		_token: vscode.CancellationToken
 	): Promise<void> {
-        let service = this.ServiceTable.get(document.uri.fsPath);
-        if (!service) {
-            service = new SoundEventsEditorService(this.context);
-            this.ServiceTable.set(document.uri.fsPath, service);
-        }
-        webviewPanel.onDidDispose(() => {
-            this.ServiceTable.delete(document.uri.fsPath);
-        });
+        const service = new SoundEventsEditorService(this.context);
         await service.resolveCustomTextEditor(document, webviewPanel, _token);
     }
 }
