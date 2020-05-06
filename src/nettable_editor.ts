@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { KeyValues3, loadFromString, emptyKeyValues, KeyValues3Type, formatKeyValues, NewKeyValue, NewKeyValuesArray } from 'easy-keyvalues/dist/kv3';
-import { GetNonce, onRequest, listenRequest, writeDocument, initializeKV3ToDocument } from './utils';
+import { GetNonce, writeDocument, initializeKV3ToDocument, RequestHelper } from './utils';
 
 export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -14,8 +14,10 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     private kvList: KeyValues3[];
+    private request: RequestHelper;
 
     constructor( private readonly context: vscode.ExtensionContext ) {
+        this.request = new RequestHelper();
         this.kvList = [];
     }
 
@@ -88,7 +90,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         };
 
         // Add a table name
-        listenRequest("add-table", (...args: any[]) => {
+        this.request.listenRequest("add-table", (...args: any[]) => {
             if (args.length <= 0) {
                 return;
             }
@@ -101,7 +103,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         });
 
         // Remove a table name
-        listenRequest("remove-table", (...args: any[]) => {
+        this.request.listenRequest("remove-table", (...args: any[]) => {
             if (args.length <= 0) {
                 return;
             }
@@ -114,7 +116,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         });
 
         // modify a table name
-        listenRequest("modify-table", (...args: any[]) => {
+        this.request.listenRequest("modify-table", (...args: any[]) => {
             if (args.length < 2) {
                 return;
             }
@@ -144,7 +146,7 @@ export class NetTableEditorProvider implements vscode.CustomTextEditorProvider {
         });
 
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            onRequest(ev, webviewPanel.webview);
+            this.request.onRequest(ev, webviewPanel.webview);
         });
 
         // Initialize it if it is empty text

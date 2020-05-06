@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { GetNonce, onRequest, listenRequest, writeDocument } from './utils';
+import { GetNonce, writeDocument, RequestHelper } from './utils';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -12,7 +12,10 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
         return providerRegistration;
     }
 
+    private request: RequestHelper;
+
     constructor( private readonly context: vscode.ExtensionContext ) {
+        this.request = new RequestHelper();
     }
 
     /**
@@ -39,10 +42,10 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
                 text: document.getText(),
             });
         };
-        listenRequest("request-update", updateKeyValues);
+        this.request.listenRequest("request-update", updateKeyValues);
 
         // change hero state
-        listenRequest("request-change-state", (...args: any[]) => {
+        this.request.listenRequest("request-change-state", (...args: any[]) => {
             let name = args[0];
             if (typeof name !== "string") {
                 return;
@@ -61,7 +64,7 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
         });
 
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            onRequest(ev, webviewPanel.webview);
+            this.request.onRequest(ev, webviewPanel.webview);
         });
 
         // Initialize it if it is empty text

@@ -3,9 +3,10 @@ import * as vscode from 'vscode';
 import { KeyValues3, loadFromString, formatKeyValues, NewKeyValue, NewKeyValuesObject, NewKeyValuesArray } from 'easy-keyvalues/dist/kv3';
 import { GetNonce, initializeKV3ToDocument, writeDocument, RequestHelper } from './utils';
 
-export class SoundEventsEditorService extends RequestHelper {
+export class SoundEventsEditorService {
 
     private kvList: KeyValues3[];
+    private request: RequestHelper;
 
     private static soundKeys: string[] = [
         'type',
@@ -24,7 +25,7 @@ export class SoundEventsEditorService extends RequestHelper {
     constructor(
         private readonly context: vscode.ExtensionContext,
     ) {
-        super();
+        this.request = new RequestHelper();
         this.kvList = [];
     }
 
@@ -295,7 +296,7 @@ export class SoundEventsEditorService extends RequestHelper {
         };
 
         // Add a new event
-        this.listenRequest("add-event", (...args: any[]) => {
+        this.request.listenRequest("add-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -305,7 +306,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Remove a event
-        this.listenRequest("remove-event", (...args: any[]) => {
+        this.request.listenRequest("remove-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -315,7 +316,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Change a event name
-        this.listenRequest("change-event-name", (...args: any[]) => {
+        this.request.listenRequest("change-event-name", (...args: any[]) => {
             const oldEvent = args[0];
             const newEvent = args[1];
             if (typeof oldEvent !== 'string' && typeof newEvent !== 'string') {
@@ -326,7 +327,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Remove a sound file
-        this.listenRequest("remove-sound-file", (...args: any[]) => {
+        this.request.listenRequest("remove-sound-file", (...args: any[]) => {
             const event = args[0];
             const index = args[1];
             if (typeof event !== 'string' && typeof index !== 'number') {
@@ -337,7 +338,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Add a sound file
-        this.listenRequest("add-sound-file", (...args: any[]) => {
+        this.request.listenRequest("add-sound-file", (...args: any[]) => {
             const event = args[0];
             const file = args[1];
             if (typeof event !== 'string' && typeof file !== 'string') {
@@ -348,12 +349,12 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Return soundKeys
-        this.listenRequest("get-sound-keys", (...args: any[]) => {
+        this.request.listenRequest("get-sound-keys", (...args: any[]) => {
             return SoundEventsEditorService.soundKeys;
         });
 
         // Add or change a sound key
-        this.listenRequest("change-sound-key", (...args: any[]) => {
+        this.request.listenRequest("change-sound-key", (...args: any[]) => {
             const event = args[0];
             const key = args[1];
             const value = args[2];
@@ -365,7 +366,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Remove a sound key
-        this.listenRequest("remove-sound-key", (...args: any[]) => {
+        this.request.listenRequest("remove-sound-key", (...args: any[]) => {
             const event = args[0];
             const key = args[1];
             if (typeof event !== 'string' && typeof key !== 'string') {
@@ -376,7 +377,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Move a sound event
-        this.listenRequest("move-sound-event", (...args: any[]) => {
+        this.request.listenRequest("move-sound-event", (...args: any[]) => {
             const event = args[0];
             const up = args[1];
             if (typeof event !== 'string' && typeof up !== 'boolean') {
@@ -387,7 +388,7 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         // Dulpicate a sound event
-        this.listenRequest("duplicate-sound-event", (...args: any[]) => {
+        this.request.listenRequest("duplicate-sound-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
                 return;
@@ -406,12 +407,11 @@ export class SoundEventsEditorService extends RequestHelper {
         });
 
         webviewPanel.onDidDispose(() => {
-            this._requestMap.clear();
             onChangeDocument.dispose();
         });
 
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            this.onRequest(ev, webviewPanel.webview);
+            this.request.onRequest(ev, webviewPanel.webview);
         });
 
         // Initialize it if it is empty text

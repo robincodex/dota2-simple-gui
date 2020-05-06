@@ -9,27 +9,12 @@ export function GetNonce() {
     return text;
 }
 
-const requestMap = new Map<string, Function>();
-
-export function listenRequest(label: string, cb: Function) {
-    requestMap.set(label, cb);
-}
-
-export function onRequest(e: any, webview: vscode.Webview) {
-    if (e.label && e.requestId) {
-        let cb = requestMap.get(e.label);
-        if (cb) {
-            let result = cb(...e.args);
-            webview.postMessage({
-                requestId: e.requestId,
-                result,
-            });
-        }
-    }
-}
-
 export class RequestHelper {
-    public _requestMap = new Map<string, Function>();
+    private _requestMap = new Map<string, Function>();
+
+    public clear() {
+        this._requestMap.clear();
+    }
 
     public listenRequest(label: string, cb: Function) {
         this._requestMap.set(label, cb);

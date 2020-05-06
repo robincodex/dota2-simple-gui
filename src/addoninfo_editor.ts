@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-import { loadFromString, emptyKeyValues, NewKeyValues, formatKeyValues, KeyValues } from 'easy-keyvalues';
-import { GetNonce, onRequest, listenRequest, writeDocument } from './utils';
+import { loadFromString, NewKeyValues, formatKeyValues, KeyValues } from 'easy-keyvalues';
+import { GetNonce, writeDocument, RequestHelper } from './utils';
 
 const DefaultMapsList = [
     'dota',
@@ -26,10 +26,12 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
 
     private kvList: KeyValues[];
     private mapsList: string[];
+    private request: RequestHelper;
 
     constructor( private readonly context: vscode.ExtensionContext ) {
         this.kvList = [];
         this.mapsList = [];
+        this.request = new RequestHelper();
     }
 
     /**
@@ -344,7 +346,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         };
 
         // Change MaxPlayers property of map
-        listenRequest("change-map-max-players", (...args: any[]) => {
+        this.request.listenRequest("change-map-max-players", (...args: any[]) => {
             if (args.length < 2) {
                 return;
             }
@@ -353,7 +355,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Add a map to value of maps
-        listenRequest("add-map", (...args: any[]) => {
+        this.request.listenRequest("add-map", (...args: any[]) => {
             if (args.length < 1) {
                 return;
             }
@@ -362,7 +364,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Remove a map
-        listenRequest("remove-map", (...args: any[]) => {
+        this.request.listenRequest("remove-map", (...args: any[]) => {
             if (args.length < 1) {
                 return;
             }
@@ -371,7 +373,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Toggle a option
-        listenRequest("toggle-option", (...args: any[]) => {
+        this.request.listenRequest("toggle-option", (...args: any[]) => {
             if (args.length < 1) {
                 return;
             }
@@ -380,7 +382,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Remove a key
-        listenRequest("keyboard-remove", (...args: any[]) => {
+        this.request.listenRequest("keyboard-remove", (...args: any[]) => {
             if (args.length < 1) {
                 return;
             }
@@ -389,7 +391,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Modify a key
-        listenRequest("keyboard-modify", (...args: any[]) => {
+        this.request.listenRequest("keyboard-modify", (...args: any[]) => {
             if (args.length < 4) {
                 return;
             }
@@ -398,7 +400,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         // Add a new key
-        listenRequest("keyboard-add-key", (...args: any[]) => {
+        this.request.listenRequest("keyboard-add-key", (...args: any[]) => {
             if (args.length < 3) {
                 return;
             }
@@ -420,7 +422,7 @@ export class AddonInfoEditorProvider implements vscode.CustomTextEditorProvider 
         });
 
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
-            onRequest(ev, webviewPanel.webview);
+            this.request.onRequest(ev, webviewPanel.webview);
         });
 
         updateKeyValues();
