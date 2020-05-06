@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { GetNonce, onRequest, listenRequest } from './utils';
+import { GetNonce, onRequest, listenRequest, writeDocument } from './utils';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -63,6 +63,18 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
         webviewPanel.webview.onDidReceiveMessage((ev: any) => {
             onRequest(ev, webviewPanel.webview);
         });
+
+        // Initialize it if it is empty text
+        if (document.getText().trim().length === 0) {
+            let rootKey = '';
+            if (document.uri.fsPath.endsWith('herolist.txt')) {
+                rootKey = 'CustomHeroList';
+            } else {
+                rootKey = 'whitelist';
+            }
+            writeDocument(document, `"${rootKey}"\n{\n}`);
+            return;
+        }
     }
 
     /**
