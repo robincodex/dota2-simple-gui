@@ -9,6 +9,14 @@ export function GetNonce() {
     return text;
 }
 
+export function locale(): string {
+    const config = JSON.parse(String(process.env.VSCODE_NLS_CONFIG));
+    return config['locale'] || 'en';
+}
+
+/**
+ * Help you interact with the view.
+ */
 export class RequestHelper {
     private _requestMap = new Map<string, Function>();
 

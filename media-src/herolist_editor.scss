@@ -2,30 +2,131 @@
 
 #editor {
     display: flex;
+    flex-direction: column;
+    padding-bottom: 100px;
+}
+
+#team-bad {
+    margin-top: 20px;
+}
+
+.team-title {
+    text-align: center;
+    font-size: 22px;
+}
+
+.hero-container-line {
+    display: flex;
+    flex-direction: row;
+}
+
+.hero-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 5px;
+    width: 100%;
+}
+
+.hero-primary {
+    text-align: center;
+    color: #999999;
+}
+
+.hero-list {
+    display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    padding-bottom: 100px;
+}
 
-    .hero-item {
-        display: inline-block;
-        width: 250px;
-        margin: 3px;
-        padding: 3px;
+.hero {
+    display: inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    margin: 3px;
+    padding: 3px;
+    user-select: none;
+    cursor: pointer;
+    filter: grayscale(0);
+
+    img {
+        width: 64px;
+        filter: grayscale(80%);
         user-select: none;
-        cursor: pointer;
+        -webkit-user-drag: none;
+        pointer-events: none;
+    }
 
-        span, img {
-            vertical-align: middle;
-            pointer-events: none;
-            font-size: 18px;
+    &:hover {
+        box-shadow: inset #ffffff 0px 0px 3px;
+    }
+
+    &.state-enable {
+        img {
+            filter: grayscale(0);
         }
-
-        &:hover {
-            background: #252526;
+        box-shadow: inset #1fff35 0px 0px 6px 1px;
+    }
+    &.state-reselect {
+        img {
+            filter: grayscale(0);
         }
+        box-shadow: inset #ff7300 0px 0px 6px 1px;
+    }
+}
 
-        &.selected {
-            background: #374b37;
+.large-img {
+    .hero {
+        margin: 5px;
+        padding: 6px;
+        img {
+            width: 128px;
         }
     }
+}
+
+.state-box-line {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+.state-box {
+    margin-right: 7px;
+    &::before {
+        width: 14px;
+        height: 14px;
+        background-color: rgb(66, 66, 66);
+        content: "";
+        display: inline-block;
+        vertical-align: -0.15em;
+        margin-right: 3px;
+    }
+
+    &.state-enable-color::before {
+        background-color: #1fff35;
+    }
+    &.state-reselect-color::before {
+        background-color: #ff7300;
+    }
+}
+
+@keyframes msg-text-anim {
+    0% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+}
+
+.msg-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #ffffff;
+
+    animation-name: msg-text-anim;
+    animation-duration: 1.2s;
 }

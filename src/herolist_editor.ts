@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { GetNonce, writeDocument, RequestHelper } from './utils';
+import { GetNonce, writeDocument, RequestHelper, locale } from './utils';
+import { KeyValues, loadFromString, formatKeyValues, NewKeyValues } from 'easy-keyvalues';
 
 export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
@@ -13,9 +14,27 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
     }
 
     private request: RequestHelper;
+    private kvList: KeyValues[];
 
     constructor( private readonly context: vscode.ExtensionContext ) {
         this.request = new RequestHelper();
+        this.kvList = [];
+    }
+
+    private getJSON() {
+        const root = this.kvList.find((v) => v.Key==='whitelist' || v.Key==='CustomHeroList');
+        if (!root || !Array.isArray(root.Value)) {
+            return '{}';
+        }
+
+        const data: {[key: string]: string} = {};
+        for(const kv of root.Value) {
+            if (typeof kv.Value === 'string') {
+                data[kv.Key] = kv.Value;
+            }
+        }
+
+        return JSON.stringify(data);
     }
 
     /**
@@ -37,12 +56,16 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
         // send a text to webview
         const updateKeyValues = async () => {
+            try {
+                this.kvList = await loadFromString(document.getText());
+            } catch(e) {
+                vscode.window.showErrorMessage(e.toString() + "\n" + document.uri.fsPath);
+            }
             webviewPanel.webview.postMessage({
                 label: 'update',
-                text: document.getText(),
+                text: this.getJSON(),
             });
         };
-        this.request.listenRequest("request-update", updateKeyValues);
 
         // change hero state
         this.request.listenRequest("request-change-state", (...args: any[]) => {
@@ -51,6 +74,14 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
                 return;
             }
             this.changeHeroState(document, name);
+        });
+
+        this.request.listenRequest("copy-heroname", (...args: any[]) => {
+            let name = args[0];
+            if (typeof name !== "string") {
+                return;
+            }
+            vscode.env.clipboard.writeText(name);
         });
 
         const onChangeDocument = vscode.workspace.onDidChangeTextDocument((e) => {
@@ -78,46 +109,35 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
             writeDocument(document, `"${rootKey}"\n{\n}`);
             return;
         }
+
+        updateKeyValues();
     }
 
     /**
      * Change hero state
      */
     private changeHeroState(document: vscode.TextDocument, name: string) {
-        let hasChanged = false;
-        for (let i = 0; i < document.lineCount; i++) {
-            const line = document.lineAt(i);
-            if (line.text.indexOf(name) >= 0) {
-                let newText = line.text.replace(/\d/, (v) => {
-                    return v==="1"? "0":"1";
-                });
-                const edit = new vscode.WorkspaceEdit();
-                edit.replace(
-                    document.uri,
-                    line.range,
-                    newText);
-                vscode.workspace.applyEdit(edit);
-                hasChanged = true;
-                break;
-            }
+        const root = this.kvList.find((v) => v.Key==='whitelist' || v.Key==='CustomHeroList');
+        if (!root || !Array.isArray(root.Value)) {
+            return;
         }
 
-        // Insert new KeyValues text on not change.
-        if (!hasChanged) {
-            let pos = new vscode.Position(0, 0);
-            for (let i = document.lineCount-1; i >= 0; i--) {
-                const line = document.lineAt(i);
-                if (line.text.indexOf("}") >= 0) {
-                    pos = new vscode.Position(i, 0);
-                    break;
-                }
+        const kv = root.Value.find((v) => v.Key === name);
+        if (kv && typeof kv.Value === 'string') {
+            if (kv.Value === '0') {
+                kv.Value = '1';
+            } else if (kv.Value === '1') {
+                kv.Value = '-1';
+            } else if (kv.Value === '-1') {
+                kv.Value = '0';
             }
-            const edit = new vscode.WorkspaceEdit();
-            edit.insert(
-                document.uri, pos,
-                `    "${name}"        "1"\n`);
-            vscode.workspace.applyEdit(edit);
+        } else if (kv) {
+            kv.Value = "1";
+        } else {
+            root.Value.push(NewKeyValues(name, "1"));
         }
+
+        writeDocument(document, formatKeyValues(this.kvList));
     }
 
     /**
@@ -142,7 +162,7 @@ export class HeroListEditorProvider implements vscode.CustomTextEditorProvider {
 
         return `
             <!DOCTYPE html>
-            <html lang="en">
+            <html lang="${locale()}">
                 <head>
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
