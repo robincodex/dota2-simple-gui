@@ -2,7 +2,7 @@
     "name": "dota2-simple-gui",
     "displayName": "Dota2 Simple GUI",
     "description": "Visual edits some file for Dota2 custom game in vscode",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "publisher": "robincode",
     "icon": "media/logo.png",
     "engines": {
