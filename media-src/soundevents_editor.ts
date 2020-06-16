@@ -472,6 +472,4 @@ function closeSuggestion() {
     }
 }
 
-(function() {
-    Init();
-})();
+window.onload = Init;

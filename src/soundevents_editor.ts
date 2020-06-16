@@ -301,6 +301,9 @@ export class SoundEventsEditorService {
             if (typeof event !== 'string') {
                 return;
             }
+            if (event.length <= 0) {
+                return;
+            }
             this.newSoundEvent(event);
             writeDocument(document, formatKeyValues(this.kvList));
         });
@@ -309,6 +312,9 @@ export class SoundEventsEditorService {
         this.request.listenRequest("remove-event", (...args: any[]) => {
             const event = args[0];
             if (typeof event !== 'string') {
+                return;
+            }
+            if (event.length <= 0) {
                 return;
             }
             this.removeSoundEvent(event);
@@ -322,6 +328,9 @@ export class SoundEventsEditorService {
             if (typeof oldEvent !== 'string' && typeof newEvent !== 'string') {
                 return;
             }
+            if (newEvent.length <= 0) {
+                return;
+            }
             this.changeSoundEventName(oldEvent, newEvent);
             writeDocument(document, formatKeyValues(this.kvList));
         });
@@ -331,6 +340,9 @@ export class SoundEventsEditorService {
             const event = args[0];
             const index = args[1];
             if (typeof event !== 'string' && typeof index !== 'number') {
+                return;
+            }
+            if (event.length <= 0) {
                 return;
             }
             this.removeSoundFile(event, index);

@@ -114,6 +114,4 @@ function UpdateNetTables(text: string) {
     });
 }
 
-(function() {
-    Init();
-})();
+window.onload = Init;

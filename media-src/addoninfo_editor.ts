@@ -321,6 +321,4 @@ function renderKeyboard(info: updateInfo): string {
     `;
 }
 
-(function() {
-    Init();
-})();
+window.onload = Init;

@@ -184,6 +184,4 @@ function updateView() {
     });
 }
 
-(function() {
-    Init();
-})();
+window.onload = Init;
