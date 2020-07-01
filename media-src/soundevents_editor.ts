@@ -1,7 +1,5 @@
 import { vscode, request, onRequestResponse } from './utils';
 
-const Editor = document.getElementById('editor');
-
 const numberRegexp = /\-?\d+\.?\d*/;
 
 let lastSuggestion: HTMLElement = null;
@@ -35,6 +33,8 @@ const keysSuggestion: {[key: string]: string[]} = {
 };
 
 async function Init() {
+    const Editor = document.getElementById('editor');
+
     window.addEventListener('message', (ev) => {
         const evData = ev.data;
         switch (evData.label) {
@@ -95,6 +95,7 @@ async function Init() {
 }
 
 function RenderView(soundList: soundType[]) {
+    const Editor = document.getElementById('editor');
     vscode.setState({soundList});
 
     let html = `

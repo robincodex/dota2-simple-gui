@@ -487,7 +487,14 @@ export class SoundEventsEditorProvider implements vscode.CustomTextEditorProvide
     
     public static register(context: vscode.ExtensionContext): vscode.Disposable {
         const provider = new SoundEventsEditorProvider(context);
-        const providerRegistration = vscode.window.registerCustomEditorProvider(SoundEventsEditorProvider.viewType, provider);
+        const providerRegistration = vscode.window.registerCustomEditorProvider(
+            SoundEventsEditorProvider.viewType, 
+            provider, 
+            {
+                webviewOptions: {
+                    retainContextWhenHidden: true
+                }
+            });
         return providerRegistration;
     }
 

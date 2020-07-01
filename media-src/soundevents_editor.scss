@@ -2,6 +2,7 @@
 
 body {
     padding-bottom: 500px;
+    padding-top: 40px;
 }
 
 .btn {
@@ -16,6 +17,19 @@ body {
     &:active {
         background: #175385;
     }
+}
+
+#top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #1e1e1e;
+    padding-left: 15px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    border-bottom: 1px solid #333333;
+    box-shadow: #000000 0px 0px 5px;
 }
 
 .table {
