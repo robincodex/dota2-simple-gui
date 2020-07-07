@@ -1,7 +1,5 @@
 import { vscode, request, onRequestResponse } from './utils';
 
-const Editor = document.getElementById('editor');
-
 function Init() {
     window.addEventListener('message', (ev) => {
         const evData = ev.data;
@@ -22,6 +20,7 @@ function Init() {
 }
 
 function UpdateNetTables(text: string) {
+    const Editor = document.getElementById('editor');
     vscode.setState({text});
 
     const list: string[] = JSON.parse(text);

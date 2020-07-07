@@ -1,8 +1,6 @@
 import { HeroTable } from './herolist';
 import { vscode, request, onRequestResponse } from './utils';
 
-const Editor = document.getElementById('editor');
-
 // @ts-ignore
 const baseUri = window.baseUri;
 
@@ -35,6 +33,8 @@ const localeData = {
 };
 
 function Init() {
+    const Editor = document.getElementById('editor');
+
     let lang = document.documentElement.lang;
 
     const renderHero = (name: string) => {
@@ -163,6 +163,7 @@ function Init() {
 function updateView() {
     const state = vscode.getState();
     const data: {[key: string]: string} = state.data;
+    const Editor = document.getElementById('editor');
 
     const heroList = Editor.querySelectorAll(".hero");
     heroList.forEach((item) => {
