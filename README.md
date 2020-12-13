@@ -1,5 +1,7 @@
 # DOTA2 Simple GUI
 
+### I have deprecated the repository and the GUI will be updated in https://github.com/RobinCodeX/dota2-coding-helper in the future
+
 [![download](https://img.shields.io/visual-studio-marketplace/d/robincode.dota2-simple-gui)](https://marketplace.visualstudio.com/items?itemName=robincode.dota2-simple-gui)
 
 > ⚠️ 请在使用此扩展前备份好你的文件  
